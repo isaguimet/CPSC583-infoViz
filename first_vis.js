@@ -4,8 +4,8 @@ Isabella Guimet Pedraz
 UCID: 30040654
 */
 
-var margin = {top: 20, right: 50, bottom: 400, left: 300};
-var width = 20500 - margin.left - margin.right;
+var margin = {top: 20, right: 50, bottom: 400, left: 180};
+var width = 6500 - margin.left - margin.right;
 var height = 1500 - margin.top - margin.bottom;
 
 // Append the svg to the div for this visualization
@@ -36,7 +36,7 @@ function showData(data) {
 
     // Setting up groups and subgroups for stacking data
     // Only salary columns into one stack
-    var salary_sub_group = data.columns.slice(8);
+    var salary_sub_group = data.columns.slice(9);
     var types_of_majors_groups = d3.map(data, function(d){
         return d.Major;
     })
@@ -44,8 +44,8 @@ function showData(data) {
     // Setting up the X axis
     var xAxis = d3.scaleBand()
                 .domain(types_of_majors_groups)
-                .range([0, 8000]) // to make bars thin/ thick
-                .padding([0.2])
+                .range([0, 6000]) // to make bars thin/ thick /// 8000
+                .padding([0.3])
 
     // Setting up the Y axis
     var yAxis = d3.scaleLinear()
@@ -61,7 +61,7 @@ function showData(data) {
             .attr("x", 9)
             .attr("dx", "-1em")
             .attr("dy", "1em")
-            .attr("font-size", 20)
+            .attr("font-size", 15)
             .attr("transform", "rotate(-30)")
             .style("text-anchor", "end")
 
@@ -69,14 +69,14 @@ function showData(data) {
     svg.append("g")
         .call(d3.axisLeft(yAxis).ticks(20))
         .selectAll("text")
-            .attr("font-size", 25)
+            .attr("font-size", 15)
 
     svg.append("text")
         .attr("text-anchor", "end")
         .attr("transform", "rotate(-90)")
-        .attr("y", -margin.left+80)
+        .attr("y", -margin.left+90)
         .attr("x", -margin.top-400)
-        .attr("font-size", 35)
+        .attr("font-size", 25)
         .text("Salaries in $USD")
 
 
@@ -104,14 +104,14 @@ function showData(data) {
                 })
                 .attr("width", square_size)
                 .attr("height", square_size)
-                .style("fill", function(d){ return color_legend(d)})
+                .style("fill", function(d) { return color_legend(d)})
     
     // Legend text
     svg.append("text")
         .attr("text-anchor", "end")
-        .attr("x", margin.left-100)
+        .attr("x", margin.left-10)
         .attr("y", margin.top+30)
-        .attr("font-size", 30)
+        .attr("font-size", 25)
         .text("Legend")
 
     // Add appropiate labels to each square on legend
@@ -120,13 +120,13 @@ function showData(data) {
                 .enter()
                 .append("text")
                     .attr("x", 65 + square_size*1.0)
-                    .attr("y", function(d,i){ return 200 - i*(square_size+5) + (square_size/2)})
+                    .attr("y", function(d,i) {
+                        return 200 - i*(square_size+5) + (square_size/2)
+                    })
                     .text(function(d){ return d})
-                    .attr("font-size", 25)
+                    .attr("font-size", 20)
                     .attr("text-anchor", "left")
                     .style("alignment-baseline", "middle")
-
-                
 
     var stackedBars = d3.stack().keys(salary_sub_group)(data)
 
@@ -143,47 +143,4 @@ function showData(data) {
                 .attr("y", function(d) {return yAxis (d[1]); })
                 .attr("height", function(d) {return yAxis (d[0]) - yAxis (d[1]); })
                 .attr("width", xAxis.bandwidth())
-
-    /*var minMedian = d3.min(data, collegeMajor => collegeMajor.Median);
-    var maxMedian = d3.max(data, collegeMajor => collegeMajor.Median);
-    console.log("Min median: " , minMedian);
-    console.log(maxMedian);
-
-    var minP25th = d3.min(data, collegeMajor => collegeMajor.P25th);
-    var maxP25th = d3.max(data, collegeMajor => collegeMajor.P25th);
-    console.log(minP25th);
-    console.log(maxP25th);
-
-    var minEmployed = d3.min(data, collegeMajor => collegeMajor.Employed);
-    var maxEmployed = d3.max(data, collegeMajor => collegeMajor.Employed);
-    console.log(minEmployed);
-    console.log(maxEmployed);
-
-    var max = d3.max(data, collegeMajor => collegeMajor.Median)
-
-    var scaleY = d3.scaleBand()
-                    .domain(data.map(collegeMajor => collegeMajor.Major))
-                    .range([0,3000])
-                    .padding(0.2)
-
-    var scaleX = d3.scaleLinear()
-                    .domain([0,max])
-                    .range([0,200])
-
-    var axisX = d3.axisBottom(scaleX).ticks(5)
-    var axisY = d3.axisLeft(scaleY);
-
-    var stacked_bars = d3.select("#bars")
-                        .selectAll("rect")
-                        .data(data).enter()
-                        .append("rect")
-                        .attr("fill", "grey")
-                        .attr("height", 10)
-                        .attr("width", collegeMajor => scaleX(collegeMajor.Median))
-                        .attr("y", collegeMajor => scaleY(collegeMajor.Major))
-                        .attr("transform", "translate(270,0)")
-
-    //d3.select("#axisX").attr("transform", "translate(50,200)").call(axisX)
-    d3.select("#axisY").attr("transform", "translate(270,0)").call(axisY)
-*/
 }
