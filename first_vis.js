@@ -85,8 +85,52 @@ function showData(data) {
                 .domain(salary_sub_group)
                 .range(['#87c1f5','#47a8ff','#055fb0'])
 
+    // Setting up legend to add to SVG
+    var salary_type_legend = ["25th Percentile", "Median", "75th Percentile"]
+
+    var color_legend = d3.scaleOrdinal()
+                        .domain(salary_type_legend)
+                        .range(['#87c1f5','#47a8ff','#055fb0'])
+
+    // Adds the squares with different colors
+    var square_size = 50
+    svg.selectAll("legend-squares")
+            .data(salary_type_legend)
+            .enter()
+            .append("rect")
+                .attr("x", 50)
+                .attr("y", function(d, i) {
+                    return 200 - i*(square_size+12)
+                })
+                .attr("width", square_size)
+                .attr("height", square_size)
+                .style("fill", function(d){ return color_legend(d)})
+    
+    // Legend text
+    svg.append("text")
+        .attr("text-anchor", "end")
+        .attr("x", margin.left-100)
+        .attr("y", margin.top+30)
+        .attr("font-size", 30)
+        .text("Legend")
+
+    // Add appropiate labels to each square on legend
+    svg.selectAll("label-squares")
+                .data(salary_type_legend)
+                .enter()
+                .append("text")
+                    .attr("x", 65 + square_size*1.0)
+                    .attr("y", function(d,i){ return 200 - i*(square_size+5) + (square_size/2)})
+                    .text(function(d){ return d})
+                    .attr("font-size", 25)
+                    .attr("text-anchor", "left")
+                    .style("alignment-baseline", "middle")
+
+                
+
     var stackedBars = d3.stack().keys(salary_sub_group)(data)
 
+    // Appeding / creatind stacked bar graphs for each major
     svg.append("g")
         .selectAll("g")
         .data(stackedBars)
