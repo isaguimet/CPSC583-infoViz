@@ -6,9 +6,9 @@ UCID: 30040654
 JS file for 1st visualization variation
 */
 
-var margin = {top: 20, right: 50, bottom: 400, left: 180};
+var margin = {top: 20, right: 50, bottom: 250, left: 180};
 var width = 6500 - margin.left - margin.right;
-var height = 1500 - margin.top - margin.bottom;
+var height = 1000 - margin.top - margin.bottom;
 
 // Append the svg to the div for this visualization
 var svg = d3.select("#info-viz-project").append("svg")
@@ -67,12 +67,21 @@ function showData(data) {
             .attr("transform", "rotate(-30)")
             .style("text-anchor", "end")
 
+    // Adding Label to the X axis
+    svg.append("text")
+        .attr("text-anchor", "end")
+        .attr("x", margin.left+450)
+        .attr("y", margin.top+900)
+        .attr("font-size", 25)
+        .text("Majors")
+
     // Adding the Y axis to SVG body
     svg.append("g")
         .call(d3.axisLeft(yAxis).ticks(20))
         .selectAll("text")
             .attr("font-size", 15)
 
+    // Adding the label to the Y axis
     svg.append("text")
         .attr("text-anchor", "end")
         .attr("transform", "rotate(-90)")

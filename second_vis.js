@@ -8,7 +8,7 @@ JS file for 2nd visualization variation
 
 var margin = {top: 20, right: 50, bottom: 400, left: 450};
 var width = 1700 - margin.left - margin.right;
-var height = 6500 - margin.top - margin.bottom;
+var height = 6100 - margin.top - margin.bottom;
 
 // Append the svg to the div for this visualization
 var svg = d3.select("#info-viz-project").append("svg")
@@ -49,7 +49,7 @@ function showData(data) {
                 .range([0, 6000]) // to make bars thin/ thick /// 8000
                 .padding([0.3])
 
-    // Setting up the XS axis
+    // Setting up the X axis
     var xAxis = d3.scaleLinear()
                 .domain([0, maxYAxis]) // Outlier here!
                 .range([0, width])
@@ -57,15 +57,22 @@ function showData(data) {
     // Adding the X Axis to SVG body
     svg.append("g")
         .attr("transform", "translate(0," + 6000 + ")")
-        .call(d3.axisBottom(xAxis))
+        .call(d3.axisTop(xAxis).tickSizeInner(-5).tickSizeOuter(0))
         .selectAll("text")
             .attr("y", 0)
             .attr("x", 9)
             .attr("dx", "-1em")
-            .attr("dy", "1em")
+            .attr("dy", "2em")
             .attr("font-size", 15)
-            .attr("transform", "rotate(-30)")
-            .style("text-anchor", "end")
+            .style("text-anchor", "center")
+
+    svg.append("text")
+        .attr("text-anchor", "end")
+        //.attr("transform", "rotate(-90)")
+        .attr("y", margin.bottom+5670)
+        .attr("x", margin.left+200)
+        .attr("font-size", 20)
+        .text("Yearly Salary in USD")
 
     // Adding the Y axis to SVG body
     svg.append("g")
@@ -100,9 +107,9 @@ function showData(data) {
             .data(salary_type_legend)
             .enter()
             .append("rect")
-                .attr("x", 700)
+                .attr("x", 800)
                 .attr("y", function(d, i) {
-                    return 200 - i*(square_size+12)
+                    return 600 - i*(square_size+12)
                 })
                 .attr("width", square_size)
                 .attr("height", square_size)
@@ -111,8 +118,8 @@ function showData(data) {
     // Legend text
     svg.append("text")
         .attr("text-anchor", "end")
-        .attr("x", margin.left+350)
-        .attr("y", margin.top+30)
+        .attr("x", margin.left+450)
+        .attr("y", margin.top+415)
         .attr("font-size", 25)
         .text("Legend")
 
@@ -121,9 +128,9 @@ function showData(data) {
                 .data(salary_type_legend)
                 .enter()
                 .append("text")
-                    .attr("x", 715 + square_size*1.0)
+                    .attr("x", 815 + square_size*1.0)
                     .attr("y", function(d,i) {
-                        return 200 - i*(square_size+5) + (square_size/2)
+                        return 600 - i*(square_size+5) + (square_size/2)
                     })
                     .text(function(d){ return d})
                     .attr("font-size", 20)
