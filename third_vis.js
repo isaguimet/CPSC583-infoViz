@@ -18,7 +18,7 @@ var svg = d3.select("#info-viz-project").append("svg")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 //  Converting all applicable string values into integers
-d3.csv("EconomicValueCollegeMajors.csv", function(data) {
+d3.csv("EconomicValueCollegeMajors_3rdVis.csv", function(data) {
     data.Median = parseInt(data.Median);
     data.P25th = parseInt(data.P25th);
     data.P75th = parseInt(data.P75th);
@@ -48,7 +48,7 @@ function showData(data) {
 
     // Setting up the Y axis
     var yAxis = d3.scaleLinear()
-                .domain([0, 1000000]) // Outlier here!
+                .domain([0, 2350000]) // Outlier here!
                 .range([height, 0])
 
     // Adding the X Axis to SVG body
@@ -112,7 +112,7 @@ function showData(data) {
             .data(numPeople_type_legend)
             .enter()
             .append("rect")
-                .attr("x", 50)
+                .attr("x", 400)
                 .attr("y", function(d, i) {
                     return 80 + i*(square_size+12)
                 })
@@ -123,19 +123,20 @@ function showData(data) {
     // Legend text
     svg.append("text")
         .attr("text-anchor", "end")
-        .attr("x", margin.left-10)
+        .attr("x", margin.left+375)
         .attr("y", margin.top+30)
         .attr("font-size", 25)
         .text("Legend")
+        .style("text-decoration", "underline")
 
     // Add appropiate labels to each square on legend
     svg.selectAll("label-squares")
                 .data(numPeople_type_legend)
                 .enter()
                 .append("text")
-                    .attr("x", 65 + square_size*1.0)
+                    .attr("x", 410 + square_size*1.0)
                     .attr("y", function(d,i) {
-                        return 85 + i*(square_size+5) + (square_size/2)
+                        return 85 + i*(square_size+5) + (square_size/1.5)
                     })
                     .text(function(d){ return d})
                     .attr("font-size", 20)

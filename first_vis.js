@@ -104,14 +104,14 @@ function showData(data) {
                         .range(['#87c1f5','#47a8ff','#055fb0'])
 
     // Adds the squares with different colors
-    var square_size = 50
+    var square_size = 35
     svg.selectAll("legend-squares")
             .data(salary_type_legend)
             .enter()
             .append("rect")
                 .attr("x", 50)
                 .attr("y", function(d, i) {
-                    return 200 - i*(square_size+12)
+                    return 175 - i*(square_size+12)
                 })
                 .attr("width", square_size)
                 .attr("height", square_size)
@@ -124,6 +124,7 @@ function showData(data) {
         .attr("y", margin.top+30)
         .attr("font-size", 25)
         .text("Legend")
+        .style("text-decoration", "underline")
 
     // Add appropiate labels to each square on legend
     svg.selectAll("label-squares")
@@ -132,7 +133,7 @@ function showData(data) {
                 .append("text")
                     .attr("x", 65 + square_size*1.0)
                     .attr("y", function(d,i) {
-                        return 200 - i*(square_size+5) + (square_size/2)
+                        return 175 - i*(square_size+5) + (square_size/3)
                     })
                     .text(function(d){ return d})
                     .attr("font-size", 20)

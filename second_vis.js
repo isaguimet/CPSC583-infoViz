@@ -122,6 +122,7 @@ function showData(data) {
         .attr("y", margin.top+415)
         .attr("font-size", 25)
         .text("Legend")
+        .style("text-decoration", "underline")
 
     // Add appropiate labels to each square on legend
     svg.selectAll("label-squares")
