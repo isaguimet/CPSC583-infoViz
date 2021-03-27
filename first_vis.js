@@ -86,9 +86,9 @@ function showData(data) {
         .attr("text-anchor", "end")
         .attr("transform", "rotate(-90)")
         .attr("y", -margin.left+90)
-        .attr("x", -margin.top-400)
+        .attr("x", -margin.top-200)
         .attr("font-size", 25)
-        .text("Salaries in $USD")
+        .text("Yearly Salaries in $USD")
 
 
     // Initializing color for each salary sub group
