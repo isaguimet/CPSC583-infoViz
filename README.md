@@ -1,37 +1,11 @@
-## Welcome to GitHub Pages
+## Welcome to Isabella's Visualizations for CPSC 583
 
-You can use the [editor on GitHub](https://github.com/isaguimet/CPSC583-infoViz/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
+You can access my website for this course by clicking on this link: https://isaguimet.github.io/CPSC583-infoViz/
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+In this website, you will have access to:
+- Project hand-in #3: Implementation
+- Project hand-in #4: Interaction (in progress)
+- Assignment 3: Implementing interaction using D3 (in-progress)
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/isaguimet/CPSC583-infoViz/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+Introduction to my dataset for project: "The Economic Value of College Majors"
+- This dataset is based on th United States census information and contains information about US college majors and their future career economic outlook.
