@@ -127,19 +127,38 @@
 				.style('opacity', 0.8)
 				.style('stroke-width', 0.3)
 				.on("mouseover", d => {
-                    
                     selectedCountry = d.properties.name
-
                     console.log(d.properties.name)
                     d3.selectAll("path.COUNTRY-CODE-" + selectedCountry)
-                    .style('stroke', 'black')
-                    .style('stroke-width', '1')
+                        .style('stroke', 'black')
+                        .style('stroke-width', '1')
+                    updateScatteplot(selectedCountry)
                 })
                 .on("mouseout", d => {
+                    selectedCountry = d.properties.name
                     d3.selectAll("path.COUNTRY-CODE-" + selectedCountry)
-                    .style('stroke', 'white')
-                    .style('stroke-width', 0.3)
+                        .style('stroke', 'white')
+                        .style('stroke-width', 0.3)
+                    mouseOutUpdateScatterplot(selectedCountry)
                 });
+
+        // When selecting a country in the map, the circle in the scatterplot with
+        // the matching country will pop out to the user
+        function updateScatteplot(selectedCountry) {
+            d3.selectAll("circle.dotCOUNTRY-" + selectedCountry)
+                .attr('stroke', '#45004f')
+                .attr("stroke-width", 2)
+                .attr("r", 10)
+        }
+
+        // When de-selecting a country in the map, the circle in the scatterplot with
+        // the matching country will go back to their original attributes / style
+        function mouseOutUpdateScatterplot(selectedCountry) {
+            d3.selectAll("circle.dotCOUNTRY-" + selectedCountry)
+                .attr('stroke', 'none')
+                .attr("stroke-width", 0)
+                .attr("r", 3.5)
+        }
 
 		svg.append('path')
 				.datum(topojson.mesh(countries.features, (a, b) => a.id !== b.id))
@@ -198,19 +217,19 @@
             .style("fill", function(d) { return color(d[fieldColor]);})
             .on("mouseover", d => {
 
-                selectedCountry = d.Country
+                //selectedCountry = d.Country
 
                 console.log(d.Country)
-                d3.selectAll("circle.dotCOUNTRY-" + selectedCountry)
+                /*d3.selectAll("circle.dotCOUNTRY-" + selectedCountry)
                     .attr("stroke", "#45004f")
                     .attr("stroke-width", "3")
-                    .attr("r", 8)
+                    .attr("r", 8)*/
             })
-            .on("mouseout", d => {
+            /*.on("mouseout", d => {
                 d3.selectAll("circle.dotCOUNTRY-" + selectedCountry)
                     .attr("stroke", "none")
                     .attr("r", 3.5)
-            });
+            });*/
 
         // draw legend
         var legend = scatterplot.append("g").attr("class", "legend-group").selectAll(".legend")
