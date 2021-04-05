@@ -67,21 +67,30 @@
         d3.json('world_countries.json'),
         d3.tsv('world_population.tsv')
     ]).then(function(data) {
+        // Brush will be used for selecting elements under scatterplot
         let brush = d3.brush()
         brush.on("brush", function(){
             let coords = d3.event.selection;
-            /*scatterplot.selectAll("circle").style("fill", function(){
+            scatterplot.selectAll("circle").style("r", function(d){
+                selectedCountry = d.Country
+
                 // getting cx and cy of these circles
                 let cx = d3.select(this).attr("cx")
                 let cy = d3.select(this).attr("cy")
 
                 // check if x and y is inside brush rectangle
                 let selected = isSelected(coords, cx, cy)
-                // if they are change the color of the country of this circle
-                // for now:
-                return selected ? "red" : "color"
 
-            })*/  
+                if (selected){
+                    d3.selectAll("path.COUNTRY-CODE-" + selectedCountry)
+                        .style('stroke', 'black')
+                        .style('stroke-width', '1')
+                }
+
+                // if they are change the radius of this circle
+                return selected ? 5 : 3.5
+
+            })
         })
         scatterplot.append("g").call(brush)
 
@@ -215,21 +224,26 @@
             .attr("cx", xMap)
             .attr("cy", yMap)
             .style("fill", function(d) { return color(d[fieldColor]);})
-            .on("mouseover", d => {
-
-                //selectedCountry = d.Country
-
+            /*.on("mouseover", d => {
+                selectedCountry = d.Country
                 console.log(d.Country)
-                /*d3.selectAll("circle.dotCOUNTRY-" + selectedCountry)
+                d3.selectAll("circle.dotCOUNTRY-" + selectedCountry)
                     .attr("stroke", "#45004f")
-                    .attr("stroke-width", "3")
-                    .attr("r", 8)*/
+                    .attr("stroke-width", "2")
+                    .attr("r", 8)
             })
-            /*.on("mouseout", d => {
+            .on("mouseout", d => {
                 d3.selectAll("circle.dotCOUNTRY-" + selectedCountry)
                     .attr("stroke", "none")
                     .attr("r", 3.5)
             });*/
+
+        function mouseOverUpdateMap() {
+
+        }
+        function mouseOutOriginalMap() {
+
+        }
 
         // draw legend
         var legend = scatterplot.append("g").attr("class", "legend-group").selectAll(".legend")
