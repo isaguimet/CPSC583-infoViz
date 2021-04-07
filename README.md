@@ -17,5 +17,7 @@ Map interactions:
 - For all of these interactions, after the mouse leaves, the country will go back to its original state
 
 Scatterplot interactions:
-- in-progress :D
+- Users can select an area in the scatteplot by holding and dragging their cursor. The selected circles in the area will pop out at the user and the matching countries in the map will have their borders highlighted in black
+- The area drawn can be dragged in any direction and can be made bigger or smaller
+- To de-select countries in the map, simply move the area away to other circles or create an area away from the circles (still in the scatterplot) to de-select all countries in the map
 
