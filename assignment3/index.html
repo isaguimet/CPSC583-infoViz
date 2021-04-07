@@ -81,16 +81,23 @@
                 // check if x and y is inside brush rectangle
                 let selected = isSelected(coords, cx, cy)
 
-                if (selected){
+                // if they are change the radius of this circle 
+                // AND update the map by highlighting those countries
+                if (selected) {
                     d3.selectAll("path.COUNTRY-CODE-" + selectedCountry)
                         .style('stroke', 'black')
                         .style('stroke-width', '1')
+                    return 7;
                 }
-
-                // if they are change the radius of this circle
-                return selected ? 5 : 3.5
-
-            })
+                else {
+                    // when circles are not in the brush, update countries to original state in map
+                    // AND return the radius of the circles to 3.5
+                    d3.selectAll("path.COUNTRY-CODE-" + selectedCountry)
+                        .style('stroke', 'white')
+                        .style('stroke-width', 0.3)
+                    return 3.5;
+                }
+            })    
         })
         scatterplot.append("g").call(brush)
 
