@@ -10,6 +10,12 @@ In this website, you will have access to:
 ## Introduction to my dataset for project: "The Economic Value of College Majors"
 - This dataset is based on the United States census information and contains information about US college majors and their future career economic outlook.
 
+## Project Hand-in #3
+- In this project hand-in, I implemented 3 visulization variations based on my dataset
+
+## Project Hand-in #4
+- In-progress
+
 ## Assignment 3 - Guide for interactions in graph:
 Map interactions:
 - A selected country will thicken the border size of the country making the country more visible
