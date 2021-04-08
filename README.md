@@ -11,7 +11,8 @@ In this website, you will have access to:
 - This dataset is based on the United States census information and contains information about US college majors and their future career economic outlook.
 
 ## Project Hand-in #3
-- In this project hand-in, I implemented 3 visulization variations based on my dataset
+- In this project hand-in, I implemented 3 visualization variations based on my dataset
+- My dataset is represented by using bar graphs and stacked bar graphs
 
 ## Project Hand-in #4
 - In-progress
