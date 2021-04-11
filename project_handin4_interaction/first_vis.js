@@ -38,15 +38,15 @@ function showData(data) {
 
     // Setting up groups and subgroups for stacking data
     // Only salary columns into one stack
-    var salary_sub_group = data.columns.slice(9);
-    var types_of_majors_groups = d3.map(data, function(d){
-        return d.Major;
-    })
+    //var salary_sub_group = data.columns.slice(9);
+    // Average salary for each major category
+    var salary_sub_group = data.columns.slice(12);
+    var types_of_majors_groups = d3.map(data, d => d.Major_category)
 
     // Setting up the X axis
     var xAxis = d3.scaleBand()
                 .domain(types_of_majors_groups)
-                .range([0, 6000]) // to make bars thin/ thick /// 6000
+                .range([0, 1000]) // to make bars thin/ thick /// 6000
                 .padding([0.3])
 
     // Setting up the Y axis
@@ -74,14 +74,6 @@ function showData(data) {
         .attr("y", margin.top+900)
         .attr("font-size", 25)
         .text("Majors")
-
-    // Adding sub-major categories to the X axis
-    svg.append("text")
-        .attr("text-anchor", "end")
-        .attr("x", margin.left)
-        .attr("y", margin.top+880)
-        .attr("font-size", 20)
-        .text("Agricultural")
 
     // Adding the Y axis to SVG body
     svg.append("g")
@@ -162,7 +154,7 @@ function showData(data) {
             .selectAll("rect")
             .data(function(d) { return d; })
             .enter().append("rect")
-                .attr("x", function(d) {return xAxis (d.data.Major); })
+                .attr("x", function(d) {return xAxis (d.data.Major_category); })
                 .attr("y", function(d) {return yAxis (d[1]); })
                 .attr("height", function(d) {return yAxis (d[0]) - yAxis (d[1]); })
                 .attr("width", xAxis.bandwidth())
