@@ -7,8 +7,8 @@ JS file for interactive visualization
 */
 
 var margin = {top: 20, right: 50, bottom: 250, left: 180};
-var width = 6500 - margin.left - margin.right;
-var height = 1000 - margin.top - margin.bottom;
+var width = 1200 - margin.left - margin.right; //6500 - margin.left - margin.right
+var height = 800 - margin.top - margin.bottom; //1000 - margin.top - margin.bottom;
 
 // Append the svg to the div for this visualization
 var svg = d3.select("#info-viz-project").append("svg")
@@ -19,6 +19,9 @@ var svg = d3.select("#info-viz-project").append("svg")
 
 //  Converting all applicable string values into integers
 d3.csv("EconomicValueCollegeMajors.csv", function(data) {
+    data.Avg_P25th = parseInt(data.Avg_P25th);
+    data.Avg_Median = parseInt(data.Avg_Median);
+    data.Avg_P75th = parseInt(data.Avg_P75th);
     data.Median = parseInt(data.Median);
     data.P25th = parseInt(data.P25th);
     data.P75th = parseInt(data.P75th);
@@ -47,12 +50,18 @@ function showData(data) {
     var xAxis = d3.scaleBand()
                 .domain(types_of_majors_groups)
                 .range([0, 1000]) // to make bars thin/ thick /// 6000
-                .padding([0.3])
+                .padding([0.5])
 
     // Setting up the Y axis
     var yAxis = d3.scaleLinear()
-                .domain([0, maxYAxis]) // Outlier here!
+                .domain([0, 140000]) // Outlier here! //maxP75th
                 .range([height, 0])
+
+    // Scale for graphs within sub-grouo
+    var scale_subGroup = d3.scaleBand()
+        .domain(salary_sub_group)
+        .range([0, xAxis.bandwidth()+10])
+        .padding([0.10])
 
     // Adding the X Axis to SVG body
     svg.append("g")
@@ -70,14 +79,14 @@ function showData(data) {
     // Adding Label to the X axis
     svg.append("text")
         .attr("text-anchor", "end")
-        .attr("x", margin.left+450)
-        .attr("y", margin.top+900)
+        .attr("x", margin.left+200) // 450
+        .attr("y", margin.top+650) // 900
         .attr("font-size", 25)
         .text("Majors")
 
     // Adding the Y axis to SVG body
     svg.append("g")
-        .call(d3.axisLeft(yAxis).ticks(20))
+        .call(d3.axisLeft(yAxis).ticks(10))
         .selectAll("text")
             .attr("font-size", 15)
 
@@ -112,17 +121,17 @@ function showData(data) {
             .append("rect")
                 .attr("x", 50)
                 .attr("y", function(d, i) {
-                    return 175 - i*(square_size+12)
+                    return 130 - i*(square_size+12)
                 })
-                .attr("width", square_size)
-                .attr("height", square_size)
+                .attr("width", square_size-3)
+                .attr("height", square_size-3)
                 .style("fill", function(d) { return color_legend(d)})
     
     // Legend text
     svg.append("text")
         .attr("text-anchor", "end")
         .attr("x", margin.left-10)
-        .attr("y", margin.top+30)
+        .attr("y", margin.top)
         .attr("font-size", 25)
         .text("Legend")
         .style("text-decoration", "underline")
@@ -134,38 +143,58 @@ function showData(data) {
                 .append("text")
                     .attr("x", 65 + square_size*1.0)
                     .attr("y", function(d,i) {
-                        return 175 - i*(square_size+5) + (square_size/3)
+                        return 130 - i*(square_size+5) + (square_size/3)
                     })
                     .text(function(d){ return d})
                     .attr("font-size", 20)
                     .attr("text-anchor", "left")
                     .style("alignment-baseline", "middle")
 
-    var stackedBars = d3.stack().keys(d => {
-        return salary_sub_group
-    })(data)
+    var stackedBars = d3.stack().keys(salary_sub_group)(data)
 
-    // Appeding / creatind stacked bar graphs for each major
+    // Appeding / creating bar graphs for each major
     svg.append("g")
         .selectAll("g")
-        .data(stackedBars)
+        .data(data)
         .enter().append("g")
-            .attr("fill", function(d) {return color(d.key); })
+            .attr("transform", function(d) { return "translate(" + xAxis(d.Major_category) + ",0)"; })
             .selectAll("rect")
-            .data(function(d) { return d; })
+            .data(function(d) { return salary_sub_group.map(function(key) { return {key: key, value: d[key]}; }); })
             .enter().append("rect")
-                .attr("x", function(d) {return xAxis (d.data.Major_category); })
-                .attr("y", function(d) {return yAxis (d[1]); })
-                .attr("height", function(d) {return yAxis (d[0]) - yAxis (d[1]); })
-                .attr("width", xAxis.bandwidth())
-                /*.on("mouseover", d => {
-                    d3.selectAll("rect")
-                    .style('stroke', 'white')
-                    .style('stroke-width', 5)
-                })
-                .on("mouseout", d => {
-                    d3.selectAll("rect")
-                    .style('stroke', 'black')
-                    .style('stroke-width', 0)
-                })*/
+            .attr("x", function(d) { return scale_subGroup(d.key); })
+            .attr("y", function(d) { return yAxis(d.value); })
+            .attr("width", scale_subGroup.bandwidth())
+            .attr("height", function(d) { return height - yAxis(d.value); })
+            .attr("fill", d => color(d.key))
+            // Adds hovering interactivity
+            .on("mouseover", function(d) {
+                d3.select(this).style('stroke', 'black')
+                                .style("stroke-width", 2)
+            })
+            .on("mouseout", function(d) {
+                d3.select(this).style('stroke', 'none')
+            });
+
+    // Creating a tool tip to show the value when hovering over a bar graph
+    var tooltip = d3.select("#info-viz-project")
+                .append("div")
+                .style("opacity", 0)
+                .attr("class", "tooltip")
+                .style("background-color", "white")
+                .style("border", "solid")
+                .style("border-width", "1px")
+                .style("border-radius", "5px")
+                .style("padding", "10px")
+
+    /*function stackedBarsGraph(data) {
+        d3.selectAll("rect")
+        .enter().append('rect')
+            .attr('x', )
+            .attr('y', )
+            .attr('width', )
+            .attr('height', )
+            .attr('rx', 0)
+            .attr('ry', 0)
+            .style('fill', '#000');
+    }*/
 }
