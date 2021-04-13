@@ -59,11 +59,7 @@ function showData(data) {
       .enter()
     	.append('option')
       .text(function (d) { return d; })
-      .attr("value", function (d) {
-          //var str = d;
-          //str = str.replace(/\s+/g, '-').toLowerCase(); // returns all variables with dashes instead of spaces, lower case
-          return d;
-      })
+      .attr("value", function (d) {return d;})
 
     // Make x and y grid lines
     function show_x_grid_lines() {
@@ -128,7 +124,7 @@ function showData(data) {
         .attr("x", margin.left+200) // 450
         .attr("y", margin.top+650) // 900
         .attr("font-size", 25)
-        .text("Majors")
+        .text("Major Categories")
 
     // Adding the Y axis to SVG body
     svg.append("g")
