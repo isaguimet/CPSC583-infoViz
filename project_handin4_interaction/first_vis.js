@@ -6,8 +6,8 @@ UCID: 30040654
 JS file for interactive visualization
 */
 
-var margin = {top: 20, right: 50, bottom: 250, left: 180};
-var width = 1200 - margin.left - margin.right; //6500 - margin.left - margin.right
+var margin = {top: 20, right: 50, bottom: 250, left: 280};
+var width = 1500 - margin.left - margin.right; //6500 - margin.left - margin.right
 var height = 800 - margin.top - margin.bottom; //1000 - margin.top - margin.bottom;
 
 // Append the svg to the div for this visualization
@@ -65,10 +65,20 @@ function showData(data) {
           return d;
       })
 
+    // Make x and y grid lines
+    function show_x_grid_lines() {
+        return d3.axisBottom(xAxis).ticks(10)
+    }
+
+    function show_y_grid_lines() {
+        return d3.axisLeft(yAxis).ticks(10)
+    }
+
+
     // Setting up the X axis
     var xAxis = d3.scaleBand()
                 .domain(types_of_majors_groups)
-                .range([0, 1000]) // to make bars thin/ thick /// 6000
+                .range([0, 1200]) // to make bars thin/ thick /// 6000
                 .padding([0.5])
 
     // Setting up the Y axis
@@ -81,6 +91,23 @@ function showData(data) {
         .domain(salary_sub_group)
         .range([0, xAxis.bandwidth()+10])
         .padding([0.10])
+
+    // Add the gridlines to the graph
+    svg.append("g")			
+      .attr("class", "grid")
+      .attr("transform", "translate(0," + height + ")")
+      .call(show_x_grid_lines()
+          .tickSize(-height)
+          .tickFormat("")
+      )
+
+    // add the Y gridlines
+    svg.append("g")			
+        .attr("class", "grid")
+        .call(show_y_grid_lines()
+            .tickSize(-width)
+            .tickFormat("")
+        )
 
     // Adding the X Axis to SVG body
     svg.append("g")
@@ -113,8 +140,8 @@ function showData(data) {
     svg.append("text")
         .attr("text-anchor", "end")
         .attr("transform", "rotate(-90)")
-        .attr("y", -margin.left+90)
-        .attr("x", -margin.top-200)
+        .attr("y", -margin.left+200)
+        .attr("x", -margin.top-160)
         .attr("font-size", 25)
         .text("Yearly Salaries in $USD")
 
@@ -218,7 +245,7 @@ function showData(data) {
          // Setting up the X axis
         var xAxis = d3.scaleBand()
             .domain(types_of_majors_groups)
-            .range([0, 1000]) // to make bars thin/ thick /// 6000
+            .range([0, 1200]) // to make bars thin/ thick /// 6000
             .padding([0.5])
 
         // Setting up the Y axis
@@ -231,6 +258,23 @@ function showData(data) {
             .domain(salary_sub_group)
             .range([0, xAxis.bandwidth()])
             .padding([0.10])
+
+        // Add the gridlines to the graph
+        svg.append("g")			
+        .attr("class", "grid")
+        .attr("transform", "translate(0," + height + ")")
+        .call(show_x_grid_lines()
+            .tickSize(-height)
+            .tickFormat("")
+        )
+
+        // add the Y gridlines
+        svg.append("g")			
+            .attr("class", "grid")
+            .call(show_y_grid_lines()
+                .tickSize(-width)
+                .tickFormat("")
+            )
 
         // Adding the X Axis to SVG body
         svg.append("g")
@@ -263,8 +307,8 @@ function showData(data) {
         svg.append("text")
             .attr("text-anchor", "end")
             .attr("transform", "rotate(-90)")
-            .attr("y", -margin.left+90)
-            .attr("x", -margin.top-200)
+            .attr("y", -margin.left+200)
+            .attr("x", -margin.top-180)
             .attr("font-size", 25)
             .text("Yearly Salaries in $USD")
 
@@ -337,6 +381,9 @@ function showData(data) {
             // key is the salary sub group (median, p25th, p75th) -- Value is the actually salary value
             .data(function(d) { return salary_sub_group.map(function(key) { return {key: key, value: d[key]}; }); })
             .enter().append("rect")
+            // Add transition / animation when bars major category changes
+            .transition()
+            .duration(1500)
             .attr("x", function(d) { return scale_subGroup(d.key); })
             .attr("y", function(d) { return yAxis(d.value); })
             .attr("width", scale_subGroup.bandwidth())
