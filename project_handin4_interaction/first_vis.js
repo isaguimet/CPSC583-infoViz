@@ -210,6 +210,11 @@ function showData(data) {
             }
         })
 
+        // Sort bars in descending order based on the P75th percentile salary
+        data.sort(function(a,b) {
+            return  b.P75th - a.P75th;
+        });
+
          // Setting up the X axis
         var xAxis = d3.scaleBand()
             .domain(types_of_majors_groups)
