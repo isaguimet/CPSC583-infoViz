@@ -46,6 +46,25 @@ function showData(data) {
     var salary_sub_group = data.columns.slice(12);
     var types_of_majors_groups = d3.map(data, d => d.Major_category)
 
+    // Creating drop down button options (All Major Categories)
+    var major_categories_button = ['Agriculture & Natural Resources', 'Arts', 'Biology & Life Science',
+    'Business', 'Communications & Journalism', 'Computers & Mathematics', 'Education', 'Engineering',
+    'Health', 'Humanities & Liberal Arts', 'Industrial Arts & Consumer Services', 'Interdisciplinary',
+    'Law & Public Policy', 'Physical Sciences', 'Psychology & Social Work', 'Social Science']
+
+    // Construct a drop down button with the following categories
+    d3.select("#category-majors-btt")
+      .selectAll('option')
+     	.data(major_categories_button)
+      .enter()
+    	.append('option')
+      .text(function (d) { return d; })
+      .attr("value", function (d) {
+          //var str = d;
+          //str = str.replace(/\s+/g, '-').toLowerCase(); // returns all variables with dashes instead of spaces, lower case
+          return d;
+      })
+
     // Setting up the X axis
     var xAxis = d3.scaleBand()
                 .domain(types_of_majors_groups)
@@ -107,7 +126,7 @@ function showData(data) {
                 .range([d3.interpolateBlues(.4),d3.interpolateBlues(.6), d3.interpolateBlues(.8)])
 
     // Setting up legend to add to SVG
-    var salary_type_legend = ["25th Percentile", "Median", "75th Percentile"]
+    var salary_type_legend = ["Average 25th Percentile", "Average Median", "Average 75th Percentile"]
 
     var color_legend = d3.scaleOrdinal()
                         .domain(salary_type_legend)
@@ -150,8 +169,6 @@ function showData(data) {
                     .attr("text-anchor", "left")
                     .style("alignment-baseline", "middle")
 
-    var stackedBars = d3.stack().keys(salary_sub_group)(data)
-
     // Appeding / creating bar graphs for each major
     svg.append("g")
         .selectAll("g")
@@ -175,26 +192,151 @@ function showData(data) {
                 d3.select(this).style('stroke', 'none')
             });
 
-    // Creating a tool tip to show the value when hovering over a bar graph
-    var tooltip = d3.select("#info-viz-project")
-                .append("div")
-                .style("opacity", 0)
-                .attr("class", "tooltip")
-                .style("background-color", "white")
-                .style("border", "solid")
-                .style("border-width", "1px")
-                .style("border-radius", "5px")
-                .style("padding", "10px")
+    function update_detailedMajorGraph(selectedMajorCategory) {
 
-    /*function stackedBarsGraph(data) {
-        d3.selectAll("rect")
-        .enter().append('rect')
-            .attr('x', )
-            .attr('y', )
-            .attr('width', )
-            .attr('height', )
-            .attr('rx', 0)
-            .attr('ry', 0)
-            .style('fill', '#000');
-    }*/
+        // Only captures the median, P25th, P75th columns of data
+        var salary_sub_group = data.columns.slice(9,12);
+        // only return those majors that match the selected major category
+        var types_of_majors_groups = d3.map(data, function(d) {
+            if (d.Major_category == selectedMajorCategory) {
+                console.log("hello");
+                return d.Major;
+            }
+        })
+        svg.selectAll("*").remove()
+
+         // Setting up the X axis
+        var xAxis = d3.scaleBand()
+            .domain(types_of_majors_groups)
+            .range([0, 1000]) // to make bars thin/ thick /// 6000
+            .padding([0.5])
+
+        // Setting up the Y axis
+        var yAxis = d3.scaleLinear()
+            .domain([0, 140000]) // Outlier here! //maxP75th
+            .range([height, 0])
+
+        // Scale for graphs within sub-grouo
+        var scale_subGroup = d3.scaleBand()
+            .domain(salary_sub_group)
+            .range([0, xAxis.bandwidth()])
+            .padding([0.10])
+
+        // Adding the X Axis to SVG body
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(xAxis).tickSizeOuter(0))
+            .selectAll("text")
+            .attr("y", 0)
+            .attr("x", 9)
+            .attr("dx", "-1em")
+            .attr("dy", "1em")
+            .attr("font-size", 15)
+            .attr("transform", "rotate(-30)")
+            .style("text-anchor", "end")
+
+        // Adding Label to the X axis
+        svg.append("text")
+            .attr("text-anchor", "end")
+            .attr("x", margin.left+200) // 450
+            .attr("y", margin.top+650) // 900
+            .attr("font-size", 25)
+            .text("Majors")
+
+        // Adding the Y axis to SVG body
+        svg.append("g")
+            .call(d3.axisLeft(yAxis).ticks(10))
+            .selectAll("text")
+            .attr("font-size", 15)
+
+        // Adding the label to the Y axis
+        svg.append("text")
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -margin.left+90)
+        .attr("x", -margin.top-200)
+        .attr("font-size", 25)
+        .text("Yearly Salaries in $USD")
+
+
+        // Initializing color for each salary sub group
+        var color = d3.scaleOrdinal()
+            .domain(salary_sub_group)
+            //.range(['#87c1f5','#47a8ff','#055fb0'])
+            .range([d3.interpolateBlues(.4),d3.interpolateBlues(.6), d3.interpolateBlues(.8)])
+
+        // Setting up legend to add to SVG
+        var salary_type_legend = ["25th Percentile", "Median", "75th Percentile"]
+
+        var color_legend = d3.scaleOrdinal()
+                    .domain(salary_type_legend)
+                    .range([d3.interpolateBlues(.4),d3.interpolateBlues(.6), d3.interpolateBlues(.8)])
+
+        // Adds the squares with different colors
+        var square_size = 35
+        svg.selectAll("legend-squares")
+        .data(salary_type_legend)
+        .enter()
+        .append("rect")
+            .attr("x", 50)
+            .attr("y", function(d, i) {
+                return 130 - i*(square_size+12)
+            })
+            .attr("width", square_size-3)
+            .attr("height", square_size-3)
+            .style("fill", function(d) { return color_legend(d)})
+
+        // Legend text
+        svg.append("text")
+            .attr("text-anchor", "end")
+            .attr("x", margin.left-10)
+            .attr("y", margin.top)
+            .attr("font-size", 25)
+            .text("Legend")
+            .style("text-decoration", "underline")
+
+        // Add appropiate labels to each square on legend
+        svg.selectAll("label-squares")
+            .data(salary_type_legend)
+            .enter()
+            .append("text")
+                .attr("x", 65 + square_size*1.0)
+                .attr("y", function(d,i) {
+                    return 130 - i*(square_size+5) + (square_size/3)
+                })
+                .text(function(d){ return d})
+                .attr("font-size", 20)
+                .attr("text-anchor", "left")
+                .style("alignment-baseline", "middle")
+
+        // Appeding / creating bar graphs for each major
+        svg.append("g")
+            .selectAll("g")
+            .data(data)
+            .enter().append("g")
+            .attr("transform", function(d) { 
+                if (d.Major_category == selectedMajorCategory) {
+                    return "translate(" + xAxis(d.Major) + ",0)"; 
+                }
+            })
+            .selectAll("rect")
+            .data(function(d) { return salary_sub_group.map(function(key) { return {key: key, value: d[key]}; }); })
+            .enter().append("rect")
+            .attr("x", function(d) { 
+                console.log(scale_subGroup(d.key));
+                return scale_subGroup(d.key); 
+            })
+            .attr("y", function(d) { return yAxis(d.value); })
+            .attr("width", scale_subGroup.bandwidth())
+            .attr("height", function(d) { return height - yAxis(d.value); })
+            .attr("fill", d => color(d.key))
+    }
+
+    // When an option in the drop down menu is clicked, update the graph accordingly
+    d3.select("#category-majors-btt").on("change", function(d) {
+        // recover the option that has been chosen
+        var selectedMajorCategory = d3.select(this).property("value")
+        // run the updateChart function with this selected option
+        update_detailedMajorGraph(selectedMajorCategory)
+    })
 }

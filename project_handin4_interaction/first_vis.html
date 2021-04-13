@@ -37,6 +37,9 @@
             display: flex;
             justify-content: flex-start;
         }
+        .drop-down-label {
+            font-size: 20px;
+        }
         a:visited {
             color: blue;
         }
@@ -50,12 +53,14 @@
             <ul class="home-class">
                 <li><a href="../index.html">Home</a></li>
             </ul>
-            <ul class="buttons-class">
+            <!--<ul class="buttons-class">
                 <li><button onclick=stackedBarsGraph>Salary Stacked Bar Graphs</button></li>
                 <li><button onclick=salaryGraphs>Salary Grouped Bar Graphs</button></li>
                 <li><button onclick=empUnemGraph>Employed vs Unemployed Statistics</button></li>
-            </ul>
-            <br/>
+            </ul>-->
+            <label class="drop-down-label" for="majors">Choose a major category to visualize in detail: </label>
+            <select id="category-majors-btt"></select>
+            <br/><br/>
             <div id="info-viz-project"></div>
         </div>
         <script src="first_vis.js"></script>
