@@ -199,13 +199,16 @@ function showData(data) {
         // Only captures the median, P25th, P75th columns of data
         var salary_sub_group = data.columns.slice(9,12);
         // only return those majors that match the selected major category
-        var types_of_majors_groups = d3.map(data, function(d) {
+        // and filter the data
+        var types_of_majors_groups = d3.map(data.filter(function(d){
             if (d.Major_category == selectedMajorCategory) {
-                console.log("hello");
+                return d;
+            }
+        }), function(d) {
+            if (d.Major_category == selectedMajorCategory) {
                 return d.Major;
             }
         })
-        //types_of_majors_groups.forEach()
 
          // Setting up the X axis
         var xAxis = d3.scaleBand()
@@ -334,6 +337,13 @@ function showData(data) {
             .attr("width", scale_subGroup.bandwidth())
             .attr("height", function(d) { return height - yAxis(d.value); })
             .attr("fill", d => color(d.key))
+            .on("mouseover", function(d) {
+                d3.select(this).style('stroke', 'black')
+                                .style("stroke-width", 2)
+            })
+            .on("mouseout", function(d) {
+                d3.select(this).style('stroke', 'none')
+            });
     }
 
     // When an option in the drop down menu is clicked, update the graph accordingly
