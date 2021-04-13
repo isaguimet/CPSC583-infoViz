@@ -165,9 +165,9 @@ function showData(data) {
             .data(salary_type_legend)
             .enter()
             .append("rect")
-                .attr("x", 50)
+                .attr("x", 850)
                 .attr("y", function(d, i) {
-                    return 130 - i*(square_size+12)
+                    return 120 - i*(square_size+12)
                 })
                 .attr("width", square_size-3)
                 .attr("height", square_size-3)
@@ -176,7 +176,7 @@ function showData(data) {
     // Legend text
     svg.append("text")
         .attr("text-anchor", "end")
-        .attr("x", margin.left-10)
+        .attr("x", margin.left+700)
         .attr("y", margin.top)
         .attr("font-size", 25)
         .text("Legend")
@@ -187,9 +187,9 @@ function showData(data) {
                 .data(salary_type_legend)
                 .enter()
                 .append("text")
-                    .attr("x", 65 + square_size*1.0)
+                    .attr("x", 860 + square_size*1.0)
                     .attr("y", function(d,i) {
-                        return 130 - i*(square_size+5) + (square_size/3)
+                        return 120 - i*(square_size+5) + (square_size/3)
                     })
                     .text(function(d){ return d})
                     .attr("font-size", 20)
@@ -250,8 +250,8 @@ function showData(data) {
 
         // Setting up the Y axis
         var yAxis = d3.scaleLinear()
-            .domain([0, 140000]) // Outlier here! //maxP75th
-            .range([height, 0])
+        .domain([0, 140000]) // Outlier here! //maxP75th
+        .range([height, 0])
 
         // Scale for graphs within sub-group
         var scale_subGroup = d3.scaleBand()
@@ -328,39 +328,39 @@ function showData(data) {
         // Adds the squares with different colors
         var square_size = 35
         svg.selectAll("legend-squares")
-        .data(salary_type_legend)
-        .enter()
-        .append("rect")
-            .attr("x", 50)
-            .attr("y", function(d, i) {
-                return 130 - i*(square_size+12)
-            })
-            .attr("width", square_size-3)
-            .attr("height", square_size-3)
-            .style("fill", function(d) { return color_legend(d)})
-
-        // Legend text
-        svg.append("text")
-            .attr("text-anchor", "end")
-            .attr("x", margin.left-10)
-            .attr("y", margin.top)
-            .attr("font-size", 25)
-            .text("Legend")
-            .style("text-decoration", "underline")
-
-        // Add appropiate labels to each square on legend
-        svg.selectAll("label-squares")
             .data(salary_type_legend)
             .enter()
-            .append("text")
-                .attr("x", 65 + square_size*1.0)
-                .attr("y", function(d,i) {
-                    return 130 - i*(square_size+5) + (square_size/3)
+            .append("rect")
+                .attr("x", 850)
+                .attr("y", function(d, i) {
+                    return 120 - i*(square_size+12)
                 })
-                .text(function(d){ return d})
-                .attr("font-size", 20)
-                .attr("text-anchor", "left")
-                .style("alignment-baseline", "middle")
+                .attr("width", square_size-3)
+                .attr("height", square_size-3)
+                .style("fill", function(d) { return color_legend(d)})
+    
+    // Legend text
+    svg.append("text")
+        .attr("text-anchor", "end")
+        .attr("x", margin.left+700)
+        .attr("y", margin.top)
+        .attr("font-size", 25)
+        .text("Legend")
+        .style("text-decoration", "underline")
+
+    // Add appropiate labels to each square on legend
+    svg.selectAll("label-squares")
+        .data(salary_type_legend)
+        .enter()
+        .append("text")
+            .attr("x", 860 + square_size*1.0)
+            .attr("y", function(d,i) {
+                return 120 - i*(square_size+5) + (square_size/3)
+            })
+            .text(function(d){ return d})
+            .attr("font-size", 20)
+            .attr("text-anchor", "left")
+            .style("alignment-baseline", "middle")
 
         // Appeding / creating bar graphs for each major
         svg.append("g")
