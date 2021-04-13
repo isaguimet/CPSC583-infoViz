@@ -194,6 +194,8 @@ function showData(data) {
 
     function update_detailedMajorGraph(selectedMajorCategory) {
 
+        svg.selectAll("*").remove()
+
         // Only captures the median, P25th, P75th columns of data
         var salary_sub_group = data.columns.slice(9,12);
         // only return those majors that match the selected major category
@@ -203,7 +205,7 @@ function showData(data) {
                 return d.Major;
             }
         })
-        svg.selectAll("*").remove()
+        //types_of_majors_groups.forEach()
 
          // Setting up the X axis
         var xAxis = d3.scaleBand()
@@ -216,7 +218,7 @@ function showData(data) {
             .domain([0, 140000]) // Outlier here! //maxP75th
             .range([height, 0])
 
-        // Scale for graphs within sub-grouo
+        // Scale for graphs within sub-group
         var scale_subGroup = d3.scaleBand()
             .domain(salary_sub_group)
             .range([0, xAxis.bandwidth()])
@@ -225,7 +227,7 @@ function showData(data) {
         // Adding the X Axis to SVG body
         svg.append("g")
             .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(xAxis).tickSizeOuter(0))
+            .call(d3.axisBottom(xAxis))
             .selectAll("text")
             .attr("y", 0)
             .attr("x", 9)
@@ -251,13 +253,12 @@ function showData(data) {
 
         // Adding the label to the Y axis
         svg.append("text")
-        .attr("text-anchor", "end")
-        .attr("transform", "rotate(-90)")
-        .attr("y", -margin.left+90)
-        .attr("x", -margin.top-200)
-        .attr("font-size", 25)
-        .text("Yearly Salaries in $USD")
-
+            .attr("text-anchor", "end")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -margin.left+90)
+            .attr("x", -margin.top-200)
+            .attr("font-size", 25)
+            .text("Yearly Salaries in $USD")
 
         // Initializing color for each salary sub group
         var color = d3.scaleOrdinal()
@@ -312,7 +313,12 @@ function showData(data) {
         // Appeding / creating bar graphs for each major
         svg.append("g")
             .selectAll("g")
-            .data(data)
+            // Filtering data so it only includes data for the selected major category
+            .data(data.filter(function(d){
+                if (d.Major_category == selectedMajorCategory) {
+                    return d;
+                }
+            }))
             .enter().append("g")
             .attr("transform", function(d) { 
                 if (d.Major_category == selectedMajorCategory) {
@@ -320,12 +326,10 @@ function showData(data) {
                 }
             })
             .selectAll("rect")
+            // key is the salary sub group (median, p25th, p75th) -- Value is the actually salary value
             .data(function(d) { return salary_sub_group.map(function(key) { return {key: key, value: d[key]}; }); })
             .enter().append("rect")
-            .attr("x", function(d) { 
-                console.log(scale_subGroup(d.key));
-                return scale_subGroup(d.key); 
-            })
+            .attr("x", function(d) { return scale_subGroup(d.key); })
             .attr("y", function(d) { return yAxis(d.value); })
             .attr("width", scale_subGroup.bandwidth())
             .attr("height", function(d) { return height - yAxis(d.value); })
@@ -336,7 +340,6 @@ function showData(data) {
     d3.select("#category-majors-btt").on("change", function(d) {
         // recover the option that has been chosen
         var selectedMajorCategory = d3.select(this).property("value")
-        // run the updateChart function with this selected option
         update_detailedMajorGraph(selectedMajorCategory)
     })
 }
