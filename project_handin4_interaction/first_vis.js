@@ -737,6 +737,9 @@ function showData(data) {
                 .selectAll("rect")
                 .data(function(d) { return salary_sub_group.map(function(key) { return {key: key, value: d[key]}; }); })
                 .enter().append("rect")
+                // Add transition / animation when bars major category changes
+                .transition()
+                .duration(1500)
                 .attr("x", function(d) { return scale_subGroup(d.key); })
                 .attr("y", function(d) { return yAxis(d.value); })
                 .attr("width", scale_subGroup.bandwidth())
