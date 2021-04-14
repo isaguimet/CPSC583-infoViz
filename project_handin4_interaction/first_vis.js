@@ -61,8 +61,17 @@ function showData(data) {
       .text(function (d) { return d; })
       .attr("value", function (d) {return d;})
 
-      // Construct a drop down button with the following categories
+    // Construct a drop down button with the following categories
     d3.select("#popular-majors-btt")
+    .selectAll('option')
+       .data(major_categories_button)
+    .enter()
+      .append('option')
+    .text(function (d) { return d; })
+    .attr("value", function (d) {return d;})
+
+    // Construct a drop down menu button with the following categories
+    d3.select("#unemployed-rate-btt")
     .selectAll('option')
        .data(major_categories_button)
     .enter()
@@ -577,17 +586,15 @@ function showData(data) {
             .attr("width", scale_subGroup.bandwidth())
             .attr("height", function(d) { return height - yAxis(d.value); })
             .attr("fill", d => color(d.key))
-            /*.on("mouseover", function(d) {
-                d3.select(this).style('stroke', 'black')
-                                .style("stroke-width", 2)
-            })
-            .on("mouseout", function(d) {
-                d3.select(this).style('stroke', 'none')
-            });*/
     }
 
     function updateToOverviewSalaries() {
         svg.selectAll("*").remove()
+
+        // Sort bars in descending order based on alphabetical order
+        data.sort(function(a,b) {
+            return a.Major_category - b.Major_category;
+        });
 
         // Average salary for each major category
         var salary_sub_group = data.columns.slice(12);
@@ -601,11 +608,6 @@ function showData(data) {
         function show_y_grid_lines() {
             return d3.axisLeft(yAxis).ticks(10)
         }
-
-        // Sort bars in descending order based on alphabetical order
-        data.sort(function(a,b) {
-            return b.Major_category - a.Major_category;
-        });
 
         // Setting up the X axis
         var xAxis = d3.scaleBand()
@@ -755,10 +757,108 @@ function showData(data) {
                 });
     }
 
-    // When the button is clicked, show the overview of all major categories salaries
+    function updateToOverviewPopularity() {
+        //var average_total_num_gradutes.data()
+    }
+
+    function updateUnemployementRate(selectedMajorCategory) {
+        svg.selectAll("*").remove()
+
+        // Sort majors in ascending order
+        data.sort(function(a,b){
+            return a.Unemployement_rate_percentage - b.Unemployement_rate_percentage;
+        })
+
+        // Constructing a horizontal graph
+        // Setting up the X axis
+        var xAxis = d3.scaleLinear()
+                    .domain([0,16])
+                    .range([0, width]) // to make bars thin/ thick /// 6000
+
+        // Adding the X Axis to SVG body
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(xAxis).ticks(10))
+            .selectAll("text")
+                .attr("font-size", 15)
+                .style("text-anchor", "center")
+
+        // Adding Label to the X axis
+        svg.append("text")
+            .attr("text-anchor", "end")
+            .attr("x", margin.left+150) // 450
+            .attr("y", margin.top+755) // 900
+            .attr("font-size", 25)
+            .text("Unemployement Rate (in %)")
+
+        // Setting up the Y axis
+        var yAxis = d3.scaleBand()
+                    .range([0, height])
+                    .domain(d3.map(data.filter(function(d){
+                        if (d.Major_category == selectedMajorCategory) {
+                            return d;
+                        }
+                    }), function(d) {
+                        if (d.Major_category == selectedMajorCategory) {
+                            return d.Major;
+                        }
+                    }))
+                    .padding(.5)
+
+
+        // Adding the Y axis to SVG body
+        svg.append("g")
+            .call(d3.axisLeft(yAxis))
+            .selectAll("text")
+                .attr("font-size", 15)
+
+        // Adding the label to the Y axis
+        svg.append("text")
+            .attr("text-anchor", "end")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -margin.left-50)
+            .attr("x", -margin.top-160)
+            .attr("font-size", 20)
+            .text("Majors in " + selectedMajorCategory)
+
+        // Creates bar graphs for each major in the selected major category
+        svg.selectAll("rect-graph")
+            .data(data.filter(function(d){
+                if (d.Major_category == selectedMajorCategory) {
+                    return d;
+                }
+            }))
+            .enter()
+            .append("rect")
+            // Add transition / animation when bars major category changes
+            .transition()
+            .duration(1500)
+            .attr("x", xAxis(0))
+            .attr("y", function(d){
+                return yAxis(d.Major)
+            })
+            .attr("width", function(d){
+                return xAxis(d.Unemployement_rate_percentage)
+            })
+            .attr("height", yAxis.bandwidth())
+            .attr("fill", "#89aee8")
+            /*.on("mouseover", function(d) {
+                d3.select(this).style('stroke', 'black')
+                                .style("stroke-width", 2)
+            })
+            .on("mouseout", function(d) {
+                d3.select(this).style('stroke', 'none')
+            });*/
+    }
+
+    // When this button is clicked, show the overview of all major categories salaries
     d3.select("#overview-salaries-btt").on("click", function(d) {
         updateToOverviewSalaries();
-    })   
+    })
+    
+    d3.select("#overview-popularity-btt").on("click", function(d) {
+        updateToOverviewPopularity();
+    })
 
     // When an option in the drop down menu is clicked, update the graph to the
     // appropiate major category's economic outlook
@@ -774,5 +874,13 @@ function showData(data) {
         // recover the option that has been chosen
         var selectedMajorCategory = d3.select(this).property("value")
         update_detailedPopularityMajorGraph(selectedMajorCategory)
+    })
+
+    // When an option in the drop down menu is clicked, update the graph to the
+    // appropiate major category's unemployment rate graph
+    d3.select("#unemployed-rate-btt").on("change", function(d) {
+        var selectedMajorCategory = d3.select(this).property("value")
+        updateUnemployementRate(selectedMajorCategory)
+        
     })
 }
