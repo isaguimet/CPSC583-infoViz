@@ -33,17 +33,19 @@ d3.csv("EconomicValueCollegeMajors.csv", function(data) {
 }).then(showData)
 function showData(data) {
 
+    // Sort bars in alphabetical order
+    data.sort(function(a,b) {
+        return b.Avg_P75th - a.Avg_P75th;
+    });
+
     // Calculating Max P75th for domain for Y axis
     var maxP75th = d3.max(data, collegeMajor => collegeMajor.P75th);
     var maxP25th = d3.max(data, collegeMajor => collegeMajor.P25th);
     var maxMedian = d3.max(data, collegeMajor => collegeMajor.Median);
     var maxYAxis = maxP25th + maxMedian + maxP75th;
 
-    // Setting up groups and subgroups for stacking data
-    // Only salary columns into one stack
-    //var salary_sub_group = data.columns.slice(9);
     // Average salary for each major category
-    var salary_sub_group = data.columns.slice(12);
+    var salary_sub_group = data.columns.slice(12,15);
     var types_of_majors_groups = d3.map(data, d => d.Major_category)
 
     // Creating drop down button options (All Major Categories)
@@ -88,20 +90,15 @@ function showData(data) {
         return d3.axisLeft(yAxis).ticks(10)
     }
 
-    // Sort bars in descending order based on alphabetical order
-    data.sort(function(a,b) {
-        return b.Major_category - a.Major_category;
-    });
-
     // Setting up the X axis
     var xAxis = d3.scaleBand()
                 .domain(types_of_majors_groups)
-                .range([0, 1200]) // to make bars thin/ thick /// 6000
+                .range([0, 1200])
                 .padding([0.5])
 
     // Setting up the Y axis
     var yAxis = d3.scaleLinear()
-                .domain([0, 140000]) // Outlier here! //maxP75th
+                .domain([0, 140000])
                 .range([height, 0])
 
     // Scale for graphs within sub-grouo
@@ -143,8 +140,8 @@ function showData(data) {
     // Adding Label to the X axis
     svg.append("text")
         .attr("text-anchor", "end")
-        .attr("x", margin.left+200) // 450
-        .attr("y", margin.top+650) // 900
+        .attr("x", 400)
+        .attr("y", margin.top+650)
         .attr("font-size", 25)
         .text("Major Categories")
 
@@ -228,14 +225,6 @@ function showData(data) {
             .attr("width", scale_subGroup.bandwidth())
             .attr("height", function(d) { return height - yAxis(d.value); })
             .attr("fill", d => color(d.key))
-            // Adds hovering interactivity
-            .on("mouseover", function(d) {
-                d3.select(this).style('stroke', 'black')
-                                .style("stroke-width", 2)
-            })
-            .on("mouseout", function(d) {
-                d3.select(this).style('stroke', 'none')
-            });
 
     function update_detailedMajorGraph(selectedMajorCategory) {
 
@@ -591,13 +580,13 @@ function showData(data) {
     function updateToOverviewSalaries() {
         svg.selectAll("*").remove()
 
-        // Sort bars in descending order based on alphabetical order
+        // Sort bars in alphabetical order
         data.sort(function(a,b) {
-            return a.Major_category - b.Major_category;
+            return b.Avg_P75th - a.Avg_P75th;
         });
 
         // Average salary for each major category
-        var salary_sub_group = data.columns.slice(12);
+        var salary_sub_group = data.columns.slice(12,15);
         var types_of_majors_groups = d3.map(data, d => d.Major_category)
 
         // Make x and y grid lines
@@ -659,8 +648,8 @@ function showData(data) {
         // Adding Label to the X axis
         svg.append("text")
             .attr("text-anchor", "end")
-            .attr("x", 250) // 450
-            .attr("y", margin.top+650) // 900
+            .attr("x", 400)
+            .attr("y", margin.top+650)
             .attr("font-size", 25)
             .text("Major Categories")
 
@@ -674,7 +663,7 @@ function showData(data) {
         svg.append("text")
             .attr("text-anchor", "end")
             .attr("transform", "rotate(-90)")
-            .attr("y", -margin.left+200)
+            .attr("y", -100)
             .attr("x", -margin.top-160)
             .attr("font-size", 25)
             .text("Yearly Salaries in $USD")
@@ -750,7 +739,164 @@ function showData(data) {
     }
 
     function updateToOverviewPopularity() {
-        
+        svg.selectAll("*").remove()
+
+        // Sort bars in alphabetical order
+        data.sort(function(a,b) {
+            return b.Avg_total - a.Avg_total;
+        });
+
+        // Average salary for each major category
+        var numOfpeople_sub_group = data.columns.slice(15);
+        var types_of_majors_groups = d3.map(data, d => d.Major_category)
+
+        // Make x and y grid lines
+        function show_x_grid_lines() {
+            return d3.axisBottom(xAxis).ticks(10)
+        }
+
+        function show_y_grid_lines() {
+            return d3.axisLeft(yAxis).ticks(10)
+        }
+
+        // Setting up the X axis
+        var xAxis = d3.scaleBand()
+                    .domain(types_of_majors_groups)
+                    .range([0, 1200]) // to make bars thin/ thick /// 6000
+                    .padding([0.5])
+
+        // Setting up the Y axis
+        var yAxis = d3.scaleLinear()
+                    .domain([0, 2000000]) // Outlier here! //maxP75th
+                    .range([height, 0])
+
+        // Scale for graphs within sub-grouo
+        var scale_subGroup = d3.scaleBand()
+            .domain(numOfpeople_sub_group)
+            .range([0, xAxis.bandwidth()+10])
+            .padding([0.10])
+
+        // Add the gridlines to the graph
+        svg.append("g")			
+        .attr("class", "grid")
+        .attr("transform", "translate(0," + height + ")")
+        .call(show_x_grid_lines()
+            .tickSize(-height)
+            .tickFormat("")
+        )
+
+        // add the Y gridlines
+        svg.append("g")			
+            .attr("class", "grid")
+            .call(show_y_grid_lines()
+                .tickSize(-width-15)
+                .tickFormat("")
+            )
+
+        // Adding the X Axis to SVG body
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(xAxis).tickSizeOuter(0))
+            .selectAll("text")
+                .attr("y", 0)
+                .attr("x", 9)
+                .attr("dx", "-1em")
+                .attr("dy", "1em")
+                .attr("font-size", 15)
+                .attr("transform", "rotate(-30)")
+                .style("text-anchor", "end")
+
+        // Adding Label to the X axis
+        svg.append("text")
+            .attr("text-anchor", "end")
+            .attr("x", 250) // 450
+            .attr("y", margin.top+650) // 900
+            .attr("font-size", 25)
+            .text("Major Categories")
+
+        // Adding the Y axis to SVG body
+        svg.append("g")
+            .call(d3.axisLeft(yAxis).ticks(10))
+            .selectAll("text")
+                .attr("font-size", 15)
+
+        // Adding the label to the Y axis
+        svg.append("text")
+            .attr("text-anchor", "end")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -100)
+            .attr("x", -margin.top-160)
+            .attr("font-size", 25)
+            .text("Number of people")
+
+
+        // Initializing color for each salary sub group
+        var color = d3.scaleOrdinal()
+            .domain(numOfpeople_sub_group)
+            //.range(['#87c1f5','#47a8ff','#055fb0'])
+            .range([d3.interpolateSpectral(.1),d3.interpolateSpectral(.3), d3.interpolateSpectral(.6), d3.interpolateSpectral(.7)])
+
+        var numPeople_type_legend = ["Average number of Graduates", "Average number of people employed",
+            "Average number of people employed full time", "Average number of people unemployed"]
+
+        var color_legend = d3.scaleOrdinal()
+                    .domain(numPeople_type_legend)
+                    .range([d3.interpolateSpectral(.1),d3.interpolateSpectral(.3), d3.interpolateSpectral(.6), d3.interpolateSpectral(.7)])
+
+        // Adds the squares with different colors
+        var square_size = 35
+        svg.selectAll("legend-squares")
+            .data(numPeople_type_legend)
+            .enter()
+            .append("rect")
+                .attr("x", 735)
+                .attr("y", function(d, i) {
+                    return 40 + i*(square_size+5)
+                })
+                .attr("width", square_size-5)
+                .attr("height", square_size-5)
+                .style("fill", function(d) { return color_legend(d)})
+    
+        // Legend text
+        svg.append("text")
+            .attr("text-anchor", "end")
+            .attr("x", margin.left+600)
+            .attr("y", margin.top)
+            .attr("font-size", 25)
+            .text("Legend")
+            .style("text-decoration", "underline")
+
+        // Add appropiate labels to each square on legend
+        svg.selectAll("label-squares")
+            .data(numPeople_type_legend)
+            .enter()
+            .append("text")
+                .attr("x", 740 + square_size*1.0)
+                .attr("y", function(d,i) {
+                    return 50 + i*(square_size+5) + (square_size/3)
+                })
+                .text(function(d){ return d})
+                .attr("font-size", 20)
+                .attr("text-anchor", "left")
+                .style("alignment-baseline", "middle")
+
+        // Appeding / creating bar graphs for each major
+        svg.append("g")
+            .selectAll("g")
+            .data(data)
+            .enter().append("g")
+                .attr("transform", function(d) { return "translate(" + xAxis(d.Major_category) + ",0)"; })
+                .selectAll("rect")
+                .data(function(d) { return numOfpeople_sub_group.map(function(key) { return {key: key, value: d[key]}; }); })
+                .enter().append("rect")
+                // Add transition / animation when bars major category changes
+                .transition()
+                .duration(1500)
+                .attr("x", function(d) { return scale_subGroup(d.key); })
+                .attr("y", function(d) { return yAxis(d.value); })
+                .attr("width", scale_subGroup.bandwidth())
+                .attr("height", function(d) { return height - yAxis(d.value); })
+                .attr("fill", d => color(d.key))
     }
 
     function updateUnemployementRate(selectedMajorCategory) {
@@ -779,9 +925,9 @@ function showData(data) {
         svg.append("text")
             .attr("text-anchor", "end")
             .attr("x", margin.left+150)
-            .attr("y", margin.top+755)
+            .attr("y", margin.top+600)
             .attr("font-size", 25)
-            .text("Unemployement Rate (in %)")
+            .text("Unemployment Rate (in %)")
 
         // Setting up the Y axis
         var yAxis = d3.scaleBand()
@@ -815,9 +961,9 @@ function showData(data) {
         // Adding the label to the Y axis
         svg.append("text")
             .attr("text-anchor", "end")
-            .attr("transform", "rotate(-90)")
-            .attr("y", -margin.left-50)
-            .attr("x", -margin.top-160)
+            //.attr("transform", "rotate(-90)")
+            .attr("y", -5)
+            .attr("x", 50)
             .attr("font-size", 20)
             .text("Majors in " + selectedMajorCategory)
 
