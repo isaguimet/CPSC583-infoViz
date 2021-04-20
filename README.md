@@ -10,12 +10,12 @@ In this website, you will have access to:
 ## Introduction to my dataset for project: "The Economic Value of College Majors"
 - This dataset is based on the United States census information and contains information about US college majors and their future career economic outlook.
 
-## Project Hand-in #3
+## Project Hand-in #3: Implementation
 - In this project hand-in, I implemented 3 visualization variations based on my dataset
 - My dataset is represented by using bar graphs and stacked bar graphs
 
-## Project Hand-in #4
-- In-progress
+## Project Hand-in #4: Interaction
+- In this project hand-in, I implemented my final visualization with interation by having filtering drop down menus and buttons
 
 ## Assignment 3 - Guide for interactions in graph:
 Map interactions:
